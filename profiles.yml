@@ -1,0 +1,30 @@
+# dbt connection profiles.
+#
+# This file lives in your project root so `dbt` picks it up automatically.
+# The `target` below selects which environment `dbt run` uses.
+
+racing_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # DuckDB database file. Created automatically on first run.
+      path: data/racing.duckdb
+      # Schema where dbt models are created.
+      schema: analytics
+      threads: 4
+      # dbt-duckdb can attach parquet/CSV via the parquet extension if needed.
+      extensions:
+        - parquet
+
+    # ---- BigQuery target (for later; see README "Migrate to BigQuery") ----
+    # Uncomment and fill in once you have a GCP project + keyfile.
+    # bq:
+    #   type: bigquery
+    #   method: service-account
+    #   project: your-gcp-project-id          # e.g. racing-analytics-demo
+    #   dataset: racing_analytics              # target dataset
+    #   threads: 4
+    #   keyfile: /path/to/service-account.json
+    #   location: US
+    #   priority: interactive

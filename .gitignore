@@ -1,0 +1,20 @@
+# dbt build artifacts
+target/
+dbt_packages/
+logs/
+
+# Local DuckDB database
+data/*.duckdb
+data/*.duckdb.wal
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Secrets (BigQuery service account)
+*.json.key
+service-account*.json

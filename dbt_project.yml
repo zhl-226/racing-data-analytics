@@ -1,0 +1,58 @@
+# dbt project for a racing-analytics data pipeline.
+#
+# Local stack: dbt-duckdb (zero-cost, runs on your laptop).
+# Cloud target (later): dbt-bigquery (free sandbox). See README "Migrate to BigQuery".
+
+name: 'racing_analytics'
+version: '1.0.0'
+config-version: 2
+
+# The profile name must match a block in profiles.yml
+profile: 'racing_analytics'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Seeds are your "raw" landing zone for now (CSVs committed to the repo).
+# In production you would replace these with external tables / a real source.
+seeds:
+  racing_analytics:
+    +quote_columns: false
+    races_sample:
+      # DuckDB sniffs int64 columns as BIGINT, but dbt's seed default is INTEGER.
+      # Override so the types match what DuckDB detects (avoids a load error).
+      +column_types:
+        race_id: bigint
+        race_number: bigint
+        course_id: bigint
+        surface: bigint
+        direction: bigint
+        distance: bigint
+        year: bigint
+        month: bigint
+        day: bigint
+        num_horses: bigint
+        age: bigint
+        rank: bigint
+        win: bigint
+        place: bigint
+        popularity: bigint
+
+# Materialization defaults:
+#   staging  -> views (cheap, always up to date)
+#   marts    -> tables (queried often, materialized)
+models:
+  racing_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts

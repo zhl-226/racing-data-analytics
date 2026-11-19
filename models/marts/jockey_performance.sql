@@ -1,0 +1,22 @@
+-- =============================================================================
+-- jockey_performance  (TODO — complete this)
+-- =============================================================================
+-- Purpose: aggregate a jockey's results from the wide fact.
+--
+-- Depends on: {{ ref('fct_race_results') }}
+--
+-- SPEC (one row per jockey_id):
+--   jockey_id, jockey
+--   n_rides        count of runners
+--   n_wins         sum(won)
+--   win_rate       avg(won)
+--   avg_win_odds   avg(win_odds)
+--   roi_pct        (avg(win_return) - 1) * 100
+--   top3_rate      avg(placed)
+--
+-- Bonus: add a HAVING clause or WHERE to keep only jockeys with >= 50 rides so
+-- the numbers aren't noise from one-off riders.
+-- =============================================================================
+
+-- TODO: build the aggregation as described.
+select 1 as todo

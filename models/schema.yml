@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  # ---- Staging ----
+  - name: stg_races
+    description: "One row per race, de-duplicated from the raw runner-level seed."
+    columns:
+      - name: race_id
+        description: "Primary key for a race."
+        tests:
+          - unique
+          - not_null
+      - name: course_id
+        description: "FK to stg_courses.course_id."
+      - name: race_date
+        description: "Date of the race (YYYY-MM-DD)."
+
+  # TODO: once you finish stg_results, add tests here, e.g.
+  # - name: stg_results
+  #   columns:
+  #     - name: race_id
+  #       tests: [not_null]
+  #     - name: horse_id
+  #       tests: [not_null]
+
+  # TODO: once you finish stg_courses, add:
+  # - name: stg_courses
+  #   columns:
+  #     - name: course_id
+  #       tests: [unique, not_null]
+
+  # ---- Marts ----
+  - name: race_counts_by_course
+    description: "Aggregate race counts and field stats per course route."
+    columns:
+      - name: course_id
+        tests:
+          - unique
+          - not_null
+      - name: n_races
+        tests:
+          - not_null
+
+  # TODO: once you finish fct_race_results, add relationship tests:
+  # - name: fct_race_results
+  #   columns:
+  #     - name: race_id
+  #       tests:
+  #         - relationships:
+  #             to: ref('stg_races')
+  #             field: race_id
+  #     - name: course_id
+  #       tests:
+  #         - relationships:
+  #             to: ref('stg_courses')
+  #             field: course_id
+
+  # TODO: once you finish market_calibration, add range tests:
+  # - name: market_calibration
+  #   columns:
+  #     - name: avg_predicted
+  #       tests:
+  #         - accepted_range:
+  #             min_value: 0
+  #             max_value: 1

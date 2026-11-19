@@ -1,0 +1,7 @@
+# Core dbt + DuckDB adapter (local dev)
+dbt-duckdb>=1.8,<2.0
+duckdb>=0.10
+
+# Used by scripts/make_sample.py to regenerate seeds from the full parquet
+pyarrow>=14.0
+pandas>=2.0

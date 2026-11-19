@@ -1,0 +1,23 @@
+-- =============================================================================
+-- course_performance  (TODO — complete this)
+-- =============================================================================
+-- Purpose: performance metrics per course route, from the wide fact.
+--
+-- Depends on: {{ ref('fct_race_results') }}
+--
+-- SPEC (one row per course_id):
+--   course_id
+--   n_runs        count of runners
+--   n_races       count of distinct race_id
+--   win_rate      avg(won)            (0..1)
+--   avg_win_odds  avg(win_odds)
+--   avg_market_prob  avg(market_prob)
+--   roi_pct       (avg(win_return) - 1) * 100   -- % profit on 1-unit win bets
+--
+-- WHY this matters for an interview: win_rate vs market_prob shows whether the
+-- market is calibrated per course; roi_pct shows if any course is systematically
+-- mispriced. Same skills as your UQ/calibration work.
+-- =============================================================================
+
+-- TODO: build the aggregation as described.
+select 1 as todo

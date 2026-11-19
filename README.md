@@ -37,16 +37,17 @@ racing-analytics/
 │   └── races_sample.csv   # 10,000 sampled runner rows
 ├── models/
 │   ├── staging/           # one table per source concept (VIEWS)
-│   │   ├── stg_races.sql      ✅ WORKED EXAMPLE
-│   │   ├── stg_results.sql    🛠 TODO (you)
-│   │   └── stg_courses.sql    🛠 TODO (you)
+│   │   ├── stg_races.sql
+│   │   ├── stg_results.sql
+│   │   └── stg_courses.sql
 │   ├── marts/             # business aggregates (TABLES)
-│   │   ├── race_counts_by_course.sql  ✅ WORKED EXAMPLE
-│   │   ├── fct_race_results.sql       🛠 TODO (you)
-│   │   ├── course_performance.sql     🛠 TODO (you)
-│   │   ├── jockey_performance.sql     🛠 TODO (you)
-│   │   └── market_calibration.sql     🛠 TODO (you)
-│   └── schema.yml         # tests + docs (some TODOs)
+│   │   ├── race_counts_by_course.sql
+│   │   ├── fct_race_results.sql
+│   │   ├── course_performance.sql
+│   │   ├── jockey_performance.sql
+│   │   ├── market_calibration.sql
+│   │   └── horse_recent_form.sql    🛠 BONUS (window functions)
+│   └── schema.yml         # data-quality tests
 └── analyses/adhoc.sql
 ```
 
@@ -118,6 +119,48 @@ After each step: `dbt run && dbt test`, then peek at the output:
 # inspect a model's rows without leaving the CLI
 dbt show --inline "select * from {{ ref('course_performance') }} order by roi_pct desc limit 10"
 ```
+
+---
+
+## Results
+
+*(Verify each number yourself with `dbt show --select <model>` or
+`.venv/bin/python scripts/practice.py --sql "..."`.)*
+
+### 1. The market is well-calibrated at low probabilities, diverges at the top
+
+| bucket | n_runs | predicted | observed |
+|---|---:|---:|---:|
+| 0.0–0.1 | 6,996 | 0.030 | 0.027 |
+| 0.1–0.2 | 1,569 | 0.142 | 0.136 |
+| 0.2–0.3 | 667 | 0.244 | 0.247 |
+| 0.3–0.4 | 370 | 0.347 | 0.349 |
+| 0.4–0.5 | 208 | 0.448 | 0.442 |
+| 0.5–0.6 | 98 | 0.552 | 0.622 |
+| 0.6–0.7 | 56 | 0.646 | 0.661 |
+| 0.7–0.8 | 36 | 0.735 | 0.861 |
+
+- **Below p ≈ 0.4:** predicted ≈ observed → the market is well-calibrated.
+- **Above p ≈ 0.5:** observed runs ~10pt above predicted, but `n_runs` collapses
+  to tens of runners → likely sampling noise, not a real edge.
+
+### 2. "Positive ROI" is small-sample noise
+
+Course 2 shows **+107% ROI** — but that entire profit is a *single* 152:1
+longshot. Remove it and the course drops to **−66%**. Aggregate ROI on tens of
+runners is statistically meaningless.
+
+### 3. Odds are heavily right-skewed
+
+`avg(win_odds) ≈ 53` but `median ≈ 18.8` (max 918). Report the median for
+skewed data, not the mean.
+
+### Takeaway
+
+The honest finding is *not* "I found a mispriced market" — it's that aggregate
+ROI and top-bucket calibration are unreliable at small sample sizes, and the
+calibration curve is the correct way to check for mispricing. That's the
+critical thinking behind the UQ/calibration work in the ML project.
 
 ---
 

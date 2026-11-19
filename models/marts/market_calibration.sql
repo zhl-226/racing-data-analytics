@@ -37,10 +37,10 @@ binned as (
 
 select
     bucket_low,
-    bucket_low::varchar || '-' || (bucket_low+0.1)::varchar as bucket_label,
-    count(*)        as n_runs,
-    avg(market_prob)as avg_predicted,
-    avg(won)        as avg_observed
+    round(bucket_low, 1)::varchar || '-' || round((bucket_low+0.1),1)::varchar as bucket_label,
+    count(*)                    as n_runs,
+    round(avg(market_prob), 4)  as avg_predicted,
+    round(avg(won), 4)          as avg_observed
 from binned
 group by bucket_low
 order by bucket_low

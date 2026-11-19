@@ -22,5 +22,25 @@
 --   - Filter to rows where market_prob is not null.
 -- =============================================================================
 
--- TODO: build the calibration curve as described.
-select 1 as todo
+with fct as (
+    select * from {{ ref('fct_race_results') }}
+    where market_prob is not null
+),
+
+binned as (
+    select
+        market_prob,
+        won,
+        floor(market_prob * 10)/10 as bucket_low
+    from fct
+)
+
+select
+    bucket_low,
+    bucket_low::varchar || '-' || (bucket_low+0.1)::varchar as bucket_label,
+    count(*)        as n_runs,
+    avg(market_prob)as avg_predicted,
+    avg(won)        as avg_observed
+from binned
+group by bucket_low
+order by bucket_low

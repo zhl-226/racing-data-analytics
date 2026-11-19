@@ -1,5 +1,5 @@
 -- =============================================================================
--- course_performance  (TODO — complete this)
+-- course_performance  (done)
 -- =============================================================================
 -- Purpose: performance metrics per course route, from the wide fact.
 --
@@ -19,5 +19,19 @@
 -- mispriced. Same skills as your UQ/calibration work.
 -- =============================================================================
 
--- TODO: build the aggregation as described.
-select 1 as todo
+with fct as (
+    select * from {{ ref('fct_race_results') }}
+)
+
+select
+    course_id,
+    count(*)                as n_runs,
+    count(distinct race_id) as n_races,
+    avg(won)                as win_rate,
+    avg(win_odds)           as avg_win_odds,
+    avg(market_prob)        as avg_market_prob,
+    (avg(win_return)-1)*100 as roi_pct
+
+from fct
+group by course_id
+order by roi_pct desc

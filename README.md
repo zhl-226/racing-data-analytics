@@ -1,10 +1,9 @@
 # racing-analytics — a dbt data-engineering project
 
 A small but real **ELT pipeline** built with [dbt](https://docs.getdbt.com/) on top
-of your existing 2.2M-row horse-racing dataset. It's designed to (a) prove the
+of existing 2.2M-row horse-racing dataset. It's designed to prove the
 data-engineering skills the internship asks for — Python + SQL, dimensional
-modeling, testing, documentation — and (b) teach you dbt/SQL by leaving the
-interesting parts for **you** to write.
+modeling, testing, documentation.
 
 The local stack is **dbt + DuckDB** (free, runs entirely on your laptop, no
 cloud account). A BigQuery migration path is included for later.
